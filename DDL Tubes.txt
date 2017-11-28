@@ -1,0 +1,129 @@
+CREATE TABLE worker (
+    id             CHAR(5) NOT NULL,
+    job            VARCHAR2(10),
+    payment        NUMBER,
+    age            CHAR(3) NOT NULL,
+    name           VARCHAR2(50),
+    airport_name   VARCHAR2(50),
+    id_airport     CHAR(5) NOT NULL
+);
+
+ALTER TABLE worker ADD CONSTRAINT worker_pk PRIMARY KEY ( id );
+
+CREATE TABLE buyers (
+    ktp      CHAR(10) NOT NULL,
+    name     VARCHAR2(50),
+    alamat   VARCHAR2(50),
+    no_hp    VARCHAR2(20)
+);
+
+ALTER TABLE buyers ADD CONSTRAINT buyers_pk PRIMARY KEY ( ktp );
+
+CREATE TABLE flight (
+    id_plane            CHAR(10) NOT NULL,
+    departure_hour      DATE,
+    departure_airport   VARCHAR2(50),
+    flight_company      VARCHAR2(20),
+    plane               VARCHAR2(20),
+    arrival_hour        DATE,
+    arrival_airport     VARCHAR2(20)
+);
+
+ALTER TABLE flight ADD CONSTRAINT flight_pk PRIMARY KEY ( id_plane );
+
+CREATE TABLE airport (
+    id_airport     CHAR(5) NOT NULL,
+    name_airport   VARCHAR2(50),
+    city           VARCHAR2(10)
+);
+
+ALTER TABLE airport ADD CONSTRAINT airport_pk PRIMARY KEY ( id_airport );
+
+CREATE TABLE in_or_out (
+    flight_number   CHAR(5) NOT NULL,
+    id_airport      CHAR(5) NOT NULL,
+    id_plane        CHAR(10) NOT NULL
+);
+
+ALTER TABLE in_or_out ADD CONSTRAINT in_or_out_pk PRIMARY KEY ( flight_number );
+
+CREATE TABLE purchase (
+    id_purchase     CHAR(5) NOT NULL,
+    amount          NUMBER,
+    cost            NUMBER,
+    ktp             CHAR(5) NOT NULL,
+    order_number    CHAR(5) NOT NULL,
+    flight_number   CHAR(5) NOT NULL,
+    id_suplier      CHAR(5) NOT NULL
+);
+
+ALTER TABLE purchase ADD CONSTRAINT purchase_pk PRIMARY KEY ( id_purchase );
+
+CREATE TABLE tiket (
+    order_number     CHAR(5) NOT NULL,
+    seat_class       CHAR(3),
+    price            NUMBER,
+    flight_number    CHAR(5),
+    flight_company   VARCHAR2(10),
+    passenger_name   VARCHAR2(50)
+);
+
+ALTER TABLE tiket ADD CONSTRAINT tiket_pk PRIMARY KEY ( order_number );
+
+CREATE TABLE flight_company (
+    id_suplier            CHAR(5) NOT NULL,
+    flight_company_name   VARCHAR2(50)
+);
+
+ALTER TABLE flight_company ADD CONSTRAINT flight_company_pk PRIMARY KEY ( id_suplier );
+
+CREATE TABLE suplier (
+    id_suplier   CHAR(5) NOT NULL,
+    type         CHAR(3),
+    address      VARCHAR2(20),
+    no_hp        CHAR(15)
+);
+
+ALTER TABLE suplier ADD CONSTRAINT suplier_pk PRIMARY KEY ( id_suplier );
+
+CREATE TABLE travel_agent (
+    id_suplier          CHAR(5) NOT NULL,
+    travel_agent_name   VARCHAR2(50)
+);
+
+ALTER TABLE travel_agent ADD CONSTRAINT travel_agent_pk PRIMARY KEY ( id_suplier );
+
+ALTER TABLE travel_agent
+    ADD CONSTRAINT table_14_suplier_fk FOREIGN KEY ( id_suplier )
+        REFERENCES suplier ( id_suplier );
+
+ALTER TABLE flight_company
+    ADD CONSTRAINT table_13_suplier_fk FOREIGN KEY ( id_suplier )
+        REFERENCES suplier ( id_suplier );
+
+ALTER TABLE purchase
+    ADD CONSTRAINT purchase_in_or_out_fk FOREIGN KEY ( flight_number )
+        REFERENCES in_or_out ( flight_number );
+
+ALTER TABLE purchase
+    ADD CONSTRAINT purchase_suplier_fk FOREIGN KEY ( id_suplier )
+        REFERENCES suplier ( id_suplier );
+
+ALTER TABLE purchase
+    ADD CONSTRAINT table_11_buyers_fk FOREIGN KEY ( ktp )
+        REFERENCES buyers ( ktp );
+
+ALTER TABLE purchase
+    ADD CONSTRAINT table_11_tiket_fk FOREIGN KEY ( order_number )
+        REFERENCES tiket ( order_number );
+
+ALTER TABLE in_or_out
+    ADD CONSTRAINT in_or_out_airport_fk FOREIGN KEY ( id_airport )
+        REFERENCES airport ( id_airport );
+
+ALTER TABLE in_or_out
+    ADD CONSTRAINT in_or_out_flight_fk FOREIGN KEY ( id_plane )
+        REFERENCES flight ( id_plane );
+ALTER TABLE worker
+    ADD CONSTRAINT worker_airport_fk FOREIGN KEY ( id_airport )
+        REFERENCES airport ( id_airport );
